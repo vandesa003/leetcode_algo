@@ -24,7 +24,7 @@ def binary_search_recursive(arr, low, high, value):
 def binary_search_iterative(arr, value):
     low = 0
     high = len(arr) - 1
-    while(low < high):
+    while(low <= high):
         mid = (low + high) // 2
         if arr[mid] > value:
             high = mid - 1
@@ -42,7 +42,8 @@ def lower_bound(arr, value):
     """
     low = 0
     high = len(arr) - 1
-    while(low < high):
+    found = len(arr)
+    while(low <= high):
         mid = (low + high) // 2
         if arr[mid] < value:
             low = mid + 1
@@ -59,7 +60,8 @@ def upper_bound(arr, value):
     """
     low = 0
     high = len(arr) - 1
-    while(low < high):
+    found = -1
+    while(low <= high):
         mid = (low + high) // 2
         if arr[mid] > value:
             high = mid - 1
@@ -71,7 +73,7 @@ def upper_bound(arr, value):
 
 if __name__ == "__main__":
     data = [1, 3, 4, 5, 6, 9 ,10 ,32, 92]
-    print(binary_search_recursive(data, 0, len(data), 92))
-    print(binary_search_iterative(data, 3))
-    print(lower_bound(data, 2))
-    print(upper_bound(data, 33))
+    # print(binary_search_recursive(data, 0, len(data), 1))
+    # print(binary_search_iterative(data, 1))
+    print(lower_bound(data, 100))
+    print(upper_bound(data, 0))
