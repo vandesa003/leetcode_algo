@@ -332,3 +332,34 @@ leetcode 94
 
 二叉树的层序遍历。这个是符合人眼观察的遍历顺序。一般用BFS来实现。
 
+### BST
+
+binary search tree.
+
+
+
+## Slide window
+
+严格意义上来说，slide window更像是一种技术，而非算法。一般用于字符串处理，对于一个连续的字符串或者链表，求一些最大不重复子串或者最大相同子串。这些问题都有一个核心共性：单向的滑动窗口就可以解决问题。
+
+一般来说，这种字符串类型的题目，如果是暴力搜索需要$$O(n^2)$$或者$$O(n^3)$$的复杂度。但是通过slide window配合hashmap来让算法记住一些迭代过程中的关键信息，就可以将复杂度优化到$$O(n)$$。
+
+目前这部分的题目，我做了2道，一道medium一道hard。总结下来2点最重要，第一，设计好hashmap该存哪些信息，怎么存。第二，设置好滑窗的步长，划窗的一个特性是end节点每次循环后，都要+1，这是保证$$O(n)$$的关键，而start节点则可以根据所求解的问题来自定步长。
+
+来一套模板吧：
+
+```python
+def slide_window(s:list):
+  	ans = []
+    table = {}
+    start_point = 0
+    end_point = 0
+    while end_point < len(s):  # 以end_point为主循环
+      	table.update  # 更新hashmap的内容
+        if condition: 
+          	table.update  # 更新hashmap的内容（如果有必要的话）。
+            start_point = xxxx  # 更新start_point
+        end_point += 1
+    return ans  # 返回结果
+```
+
