@@ -298,11 +298,36 @@ only difference is queue and stack.
 
 3道easy，3道medium。主要涉及到了二叉树的层级遍历，基本上熟悉了队列的写法，注意在python里不要用list作为队列。
 
-### DFS
+### DFS/递归/回溯（加强）
 
 今天完成了2到medium的DFS，本质上，上面的blog已经讲得非常清楚了，就是栈的数据结构的应用，或者说是递归。
 
 **不知为何，理论上BFS和DFS的复杂度一样，但是实际测试下来，DFS始终比BFS快一些。**
+
+DFS/递归博大精深，不止能解决图和树的遍历问题，同时，DFS也是回溯问题的本质。
+
+回溯：
+
+LeetCode 10. Regular Expression Matching
+
+LeetCode 17. Letter Combinations of a Phone Number
+
+LeetCode 22. Generate Parentheses
+
+LeetCode 46. Permutations(全排列)
+
+LeetCode 37. Sudoku Solver(数独)
+
+dfs的代码经常想不明白。
+
+```python
+# dfs 来做搜索的代码模板
+def dfs():
+    for choice in all_choices():
+        record(choice)
+        dfs()
+        rollback(choice)
+```
 
 
 
@@ -430,9 +455,115 @@ DFS:
 1. 维护一个状态数组：visit_state，当visit_state[i]==0时，表示节点i没有被访问过；visit_state[i]==1时表示当前节点i正在被一次dfs访问中，如果此时访问的节点状态也为1，则说明图中有环；visit_state[i]==2表示节点i已经被完全访问完，并且无环，如果访问的节点状态为2，则说明i之后的节点都已经访问过且无环。
 2. 正常访问节点i，并且递归访问i的neighbors，记得每次访问时更改visit_state的状态即可。
 
-做了一下LeetCode201，感觉这类题目有点难度，但是难度并不在BFS或者DFS，这两种的本质只是队列和堆栈，而真正的难点在于，如何根据问题建图、存图！有一个高效的图数据结构至关重要！
+做了一下LeetCode207，感觉这类题目有点难度，但是难度并不在BFS或者DFS，这两种的本质只是队列和堆栈，而真正的难点在于，如何根据问题建图、存图！有一个高效的图数据结构至关重要！
 
 
 
 ## 最小生成树
+
+
+
+## two pointers
+
+Leetcode 11. 最大装水容器，非常经典的two pointers问题。
+
+Leetcode 15. 3 Sums
+
+Leetcode 16 3 Sums closest.
+
+总结一下：
+
+大体上，two pointers可以分为2类：
+
+1. 同向指针/快慢指针
+2. 左右指针
+
+### 同向指针/快慢指针/Slide window
+
+主要用来解决链表型数据结构中的遍历问题。字符串的很多操作也可以用快慢指针。
+
+实际上，slide window也属于同向指针/快慢指针的一种。
+
+这类方法的特点就是2个指针同时从序列的左边遍历到右边或者右边到左边，不过2个指针的移动速度不同。
+
+### 左右指针/二分查找
+
+主要用来解决**有序**数组或者字符串的一些问题。今天做的这些LeetCode 11，15，16等都是属于左右指针的类型。用好了，可以帮助我们节省一次循环的遍历。
+
+## 动态规划
+
+### Leetcode 53. Max Subarray
+
+一维DP 入门，用一个辅助序列sums保存前n个元素之和。
+问题变成了：
+如果当前子序列之和小于0，则抛弃之前的所有序列，以当前节点为起点，重新计算，最后记录最大的子序列和即可。
+时间复杂度：O(n)
+没觉着这个是DP的题目，可能解法还是有问题。
+
+```python
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        if not nums or len(nums) == 0:
+            return 0
+        sums = [0] * (len(nums) + 1)
+        sums[0] = 0
+        max_sum = float("-inf")
+        for i in range(1, len(nums)+1):
+            sums[i] = sums[i-1] + nums[i-1]
+        st = 0
+        for i in range(1, len(sums)):
+            pre_sum = sums[i] - sums[st]
+            if pre_sum <= 0:
+                st = i
+            if pre_sum > max_sum:
+                max_sum = pre_sum
+        return max_sum
+```
+
+### Leetcode 70. Climbing Stairs
+
+一维DP.
+类似斐波那契数列：
+转移方程： f(n) = f(n-1) + f(n-2).
+时间复杂度：O(n)
+还是没看明白这跟DP有啥关系，就是递归而已。
+
+```python
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        res = [-1] * (n)
+        def dfs(n):
+            if n == 1:
+                return 1
+            if n == 2:
+                return 2
+            if res[n-1] == -1:
+                res[n-1] = dfs(n-1) + dfs(n-2)
+                return res[n-1]
+            else:
+                return res[n-1]
+        ans = dfs(n)
+        return ans
+```
+
+
+
+### Leetcode 121. Best Time to Buy and Sell Stock
+
+这题终于有点DP的意思了，依然是一道一维DP。用一个DP数组记录第i步的最佳选择：
+
+最后返回DP数组的最后一个元素即可。
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        if not prices or len(prices) < 2:
+            return 0
+        dp = [0] * len(prices)
+        min_p = prices[0]
+        for i in range(len(prices)):
+            dp[i] = max(dp[i-1], prices[i] - min_p)
+            min_p = min(min_p, prices[i])
+        return dp[-1]
+```
 
