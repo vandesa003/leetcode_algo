@@ -318,6 +318,8 @@ LeetCode 46. Permutations(全排列)
 
 LeetCode 37. Sudoku Solver(数独)
 
+LeetCode 39. Combination Sum
+
 dfs的代码经常想不明白。
 
 ```python
@@ -565,5 +567,118 @@ class Solution:
             dp[i] = max(dp[i-1], prices[i] - min_p)
             min_p = min(min_p, prices[i])
         return dp[-1]
+```
+
+
+
+### Leetcode 198. House Robber
+
+非常明显的一维DP，这也是第一道自己解出来的DP问题。这个其实可以理解为是背包问题的变种。
+
+输入为：nums数组
+
+假设有一个DP数组：
+
+dp: [-1, -1, -1, -1]
+
+dp[i]表示nums[0:i]的最优状态。那么状态转移方程为：
+
+dp[i] = max(dp[i-2] + nums[i], dp[i-1])
+
+有了这个，直接递归：
+
+注意一个trick：dp = [-1] * len(nums)  将dp状态数组保存起来，避免递归的时候重复计算。
+
+```python
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        if not nums or len(nums) == 0:
+            return 0
+        dp = [-1] * len(nums)  # 将dp状态数组保存起来，避免递归的时候重复计算。
+        def dfs(m):
+            if m == 0:
+                return nums[0]
+            if m == 1:
+                return max(nums[0], nums[1])
+            if dp[m] != -1:
+                return dp[m]
+            else:
+                dp[m] = max(dfs(m-2)+nums[m], dfs(m-1))
+                return dp[m]
+        ans = dfs(len(nums)-1)
+        return ans
+```
+
+遗憾的是目前的dp我只会用递归写，还有一种非递归的写法，后期需要学习。
+
+
+
+### Leetcode 120. Triangle
+
+比较典型的DP，第一道二维DP！
+被二维list的生成方式坑了：
+千万不要用：
+[[-1]*m]*n 这种方式生成二维list，因为这样生成的是浅拷贝。
+正确生成方式为：
+[[-1] * m for _ in range(m)]
+
+时间复杂度：O(n^2)
+空间复杂度：O(n^2)
+
+- 递归DP
+
+```python
+class Solution:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        dp = [[-1] * len(triangle) for _ in range(len(triangle))]
+        if not triangle or len(triangle) == 0:
+            return 0
+        def dfs(row, col):
+            if row == 0 and col == 0:
+                dp[row][col] = triangle[0][0]
+                return triangle[0][0]
+
+            if dp[row][col] == -1:
+                if row > col > 0:
+                    dp[row][col] = min(dfs(row-1, col-1), dfs(row-1, col)) + triangle[row][col]
+                elif col == 0:
+                    dp[row][col] = dfs(row-1, col) + triangle[row][col]
+                else:
+                    dp[row][col] = dfs(row-1, col-1) + triangle[row][col]
+                return dp[row][col]
+            else:
+                return dp[row][col]
+        ans = float("inf")
+        for i in range(len(triangle)):
+            tmp = dfs(len(triangle)-1, i)
+            if tmp < ans:
+                ans = tmp
+        return ans
+```
+
+- 非递归DP
+
+```python
+class Solution:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        if len(triangle) == 1:
+            return triangle[0][0]
+        dp = [[0] * len(triangle) for i in range(len(triangle))]
+        dp[0][0] = triangle[0][0]
+        ans = float("inf")
+        if not triangle or len(triangle) == 0:
+            return 0
+        for row in range(1, len(triangle)):
+            for col in range(len(triangle[row])):
+                if col == 0:
+                    dp[row][col] = dp[row-1][col] + triangle[row][col]
+                elif col == len(triangle[row])-1:
+                    dp[row][col] = dp[row-1][col-1] + triangle[row][col]
+                else:
+                    dp[row][col] = min(dp[row-1][col-1], dp[row-1][col]) + triangle[row][col]
+                if row == len(triangle) - 1:
+                    if dp[row][col] < ans:
+                        ans = dp[row][col]
+        return ans
 ```
 
