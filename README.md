@@ -378,6 +378,56 @@ binary search tree.
 
 
 
+### Heap
+
+堆，一种特殊的二叉树。
+
+特点：父节点的元素永远大于子节点(最大堆) / 父节点的元素永远小于子节点(最小堆)。
+
+LeetCode 23. Merge k Sorted Lists
+
+### 问题： 优先队列和Heap有何异同？
+
+答：插入O(LogN)删除O(LogN)的优先队列就是用Heap实现的
+
+
+
+## Linked List
+
+### 利用一个额外的root 节点，非常方便查找链表头！
+
+因为在做链表的题目时，经常因为各种switch而丢掉链表头，这里有个小小的trick，用一个单独的节点root，来作为给定输入链表的表头，这样，root节点在所有节点变换中都不会变，所以我们计算完毕后，只需要返回root.next即可找到原来的表头，非常方便！
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        root = ListNode()
+        root.next = head
+        mem = root
+        cur = root.next
+        change = False
+        while cur:
+            if change:
+                tmp = cur.next
+                cur.next = pre
+                pre.next = tmp
+                mem.next = cur
+                cur = cur.next
+                mem = cur
+            else:
+                pre = cur
+            cur = cur.next
+            change = not change
+        return root.next
+```
+
+
+
 ## Slide window
 
 严格意义上来说，slide window更像是一种技术，而非算法。一般用于字符串处理，对于一个连续的字符串或者链表，求一些最大不重复子串或者最大相同子串。这些问题都有一个核心共性：单向的滑动窗口就可以解决问题。
@@ -816,5 +866,69 @@ class Solution:
             return ans
         else:
             return 0
+```
+
+
+
+### LeetCode 55. Jump Game
+
+这是一个新的系列，Jump Game。第一题我目前只想到了回溯法(暴力解空间)：
+
+相当于模拟每种可能的解法。
+
+解空间有多大呢？
+
+具体的空间大小其实和数组内部的元素值有关，但是我们考虑一个极端情况。当数组内的所有值都
+
+大于数组长度n时，每一个index都有n-index种选择。所以总的解空间就是1x2x3x...xn=n!
+
+所以，解空间的上限就是O(n!)这种水平的算法，是完全无法实用的。
+
+即使我使用了mem来缓存一些中间结果，依然超时了：
+
+这里的代码完全是根据回溯这一节里的套路来写的，只不过加了一个dp来做缓存：
+
+```python
+class Solution:
+    def canJump(self, nums: list) -> bool:
+        arr = nums
+        dp = {}
+        def dfs(jump_from, jump_to):
+            if jump_from in dp:
+                return dp[jump_from]
+            else:
+                if jump_from == jump_to:
+                    dp[jump_from] = True
+                    return dp[jump_from]
+                if jump_from > jump_to:
+                    dp[jump_from] = False
+                    return dp[jump_from]
+                if arr[jump_from] < 1:
+                    dp[jump_from] = False
+                    return dp[jump_from]
+                for i in range(1, arr[jump_from]+1):
+                    if dfs(jump_from + i, jump_to) is True:
+                        dp[jump_from] = True
+                        return dp[jump_from]
+                dp[jump_from] = False
+                return dp[jump_from]
+        res = dfs(0, len(nums)-1)
+        return res
+```
+
+实际上这已经是一个backtracking+DP的解法了，复杂度已经降了很多了，但是还是不够。这种方法，Java能勉强通过，但是python就会超时！
+
+
+
+O(n)的方法，从最后元素开始往前遍历，每次记录最右边能跳到终点的点，作为新的终点。
+
+```python
+class Solution:
+    def canJump(self, nums: list) -> bool:
+        last_pos = len(nums) - 1
+        for i in range(len(nums)-1, -1, -1):
+            if i + nums[i] >= last_pos:
+                last_pos = i
+        return last_pos == 0
 ```
 

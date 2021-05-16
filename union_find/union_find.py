@@ -32,3 +32,29 @@ class UnionFind(object):
         y_parent = self.find(y)
         if x_parent != y_parent:
             self.parents[y_parent] = x_parent
+
+
+class UnionFindOpt(object):
+    """
+    利用rank来记录树高，尽量使得find过程速度更快。
+    """
+    def __init__(self, nums:list):
+        self.parents = {num:num for num in nums}
+        self.rank = {num:1 for num in nums}
+    
+    def find(self, x:int):
+        if self.parents[x] == x:
+            return x
+        else:
+            return self.find(self.parents[x])
+    
+    def union(self, x, y):
+        x_parent = self.find(x)
+        y_parent = self.find(y)
+        if self.rank[x_parent] == self.rank[y_parent]:
+            self.parents[x_parent] = y_parent
+            self.rank[y_parent] += 1
+        elif self.rank[x_parent] > self.rank[y_parent]:
+            self.parents[y_parent] = x_parent
+        else:
+            self.parents[x_parent] = y_parent

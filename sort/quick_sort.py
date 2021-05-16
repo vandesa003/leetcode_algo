@@ -6,9 +6,13 @@ quick sort is all about partition, and it's a recursive implementation.
 Created On 25th June, 2020
 Author: bohang.li
 """
+import random
+
 
 def partition(arr, low, high):
     i = low - 1  # smaller index
+    pivot = random.randint(low, high)
+    arr[pivot], arr[high] = arr[high], arr[pivot]
     pivot = arr[high]
     for j in range(low, high):
         if arr[j] < pivot:

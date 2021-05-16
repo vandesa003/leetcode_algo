@@ -61,4 +61,3 @@ class Solution2:
                     queue.appendleft(j)
             graph.pop(i)
         return len(graph) == 0
-                

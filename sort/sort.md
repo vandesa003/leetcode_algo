@@ -15,3 +15,9 @@ Step 3 − quicksort left partition recursively(递归左边分组)
 Step 4 − quicksort right partition recursively(递归右边分组)
 ```
 
+### 拓展
+快排的一个性质是partition得到的index元素在之后的排序中不会改变，所以可以用这个性质，快速求出数组的第K大的值。
+
+
+## 桶排序
+在已知输入数据范围且输入数据有限的前提下，分桶排序时间复杂度O(n)。
