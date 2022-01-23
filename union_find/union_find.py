@@ -56,5 +56,7 @@ class UnionFindOpt(object):
             self.rank[y_parent] += 1
         elif self.rank[x_parent] > self.rank[y_parent]:
             self.parents[y_parent] = x_parent
+            self.rank[y_parent] += 1
         else:
             self.parents[x_parent] = y_parent
+            self.rank[x_parent] += 1
